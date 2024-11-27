@@ -10,12 +10,12 @@ namespace WebAPI.Context
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         // Define as tabelas do banco de dados
-        public DbSet<User> Users { get; set; } 
-        public DbSet<Category> Categories { get; set; } 
-        public DbSet<Product> Products { get; set; } 
-        public DbSet<Status> Status { get; set; } 
-        public DbSet<Order> Orders { get; set; } 
-        public DbSet<ProductOrder> ProductOrders { get; set; } 
-        public DbSet<UserOrder> UserOrders { get; set; } 
+        public required DbSet<User> Users { get; set; } 
+        public required DbSet<Category> Categories { get; set; } 
+        public required DbSet<Product> Products { get; set; } 
+        public required DbSet<Status> Status { get; set; } 
+        public required DbSet<Order> Orders { get; set; } 
+        public required DbSet<ProductOrder> ProductOrders { get; set; } 
+        public required DbSet<UserOrder> UserOrders { get; set; } 
     }
 }
