@@ -134,21 +134,21 @@ namespace WebAPI.Controllers
             _context.Entry(user).State = EntityState.Modified; // Atualiza o usuário
 
             try
-                {
-                    await _context.SaveChangesAsync(); // Salva as alterações
-                }
+            {
+                await _context.SaveChangesAsync(); // Salva as alterações no banco de dados
+            }
             catch (DbUpdateConcurrencyException ex)
+            {
+                if (!UserExists(id))
                 {
-                    if (!UserExists(id))
-                    {
-                        // Caso ocorra um erro de concorrência ao atualizar os dados
-                        return StatusCode(500, new { message = "Usuário não encontrado.", error = ex.Message });
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    // Caso ocorra um erro de concorrência ao atualizar os dados
+                    return StatusCode(500, new { message = "Usuário não encontrado.", error = ex.Message });
                 }
+                else
+                {
+                    throw;
+                }
+            }
 
             // Usando o UserDTO para não retornar a senha
             var userDTO = MapToDTO(user);
@@ -159,31 +159,33 @@ namespace WebAPI.Controllers
 
         // DELETE: api/User/1
         [HttpDelete("{id}")]
-        // Rota para deletar um usuário
+        // Rota para remover um usuário
         public async Task<IActionResult> DeleteUser(int id)
         {
             try
+            {
+                // Busca o usuário pelo id
+                var user = await _context.Users.FindAsync(id);
+
+                if (user == null)
                 {
-                    var user = await _context.Users.FindAsync(id); // Busca o usuário pelo id
-                    if (user == null)
-                    {
-                        return NotFound("Usuário não encontrado.");
-                    }
-
-                    _context.Users.Remove(user); // Remove o usuário
-                    await _context.SaveChangesAsync(); // Salva as alterações
-
-                    // Usando o UserDTO para não retornar a senha
-                    var userDTO = MapToDTO(user);
-
-                    // Retorna o usuário removido
-                    return Ok(new {message= "Usuário removido com sucesso!", user = userDTO}); 
+                    return NotFound("Usuário não encontrado.");
                 }
+
+                _context.Users.Remove(user); // Remove o usuário
+                await _context.SaveChangesAsync(); // Salva as alterações
+
+                // Usando o UserDTO para não retornar a senha
+                var userDTO = MapToDTO(user);
+
+                // Retorna o usuário removido
+                return Ok(new {message= "Usuário removido com sucesso!", user = userDTO}); 
+            }
             catch (Exception ex)
-                {
-                    // Caso ocorra um erro inesperado, retorna uma resposta 500 com a mensagem de erro
-                    return StatusCode(500, new { message = "Erro ao remover o usuário.", error = ex.Message });
-                }
+            {
+                // Caso ocorra um erro inesperado, retorna uma resposta 500 com a mensagem de erro
+                return StatusCode(500, new { message = "Erro ao remover o usuário.", error = ex.Message });
+            }
         }
 
         // Método para mapear o usuário para o UserDTO e não retornar a senha
