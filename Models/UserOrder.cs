@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace WebAPI.Models;
 public class UserOrder
@@ -8,11 +7,12 @@ public class UserOrder
     [Key]
     public int Id { get; set; }
     
-    // Relacionamento 
-    [ForeignKey("Id"), JsonIgnore]
+    // Relacionamentos
+    [ForeignKey("User")]
+    public required int UserId { get; set; }
     public User? User { get; set; }
 
-    // Relacionamento 
-    [ForeignKey("Id"), JsonIgnore]
+    [ForeignKey("Order")]
+    public required int OrderId { get; set; }
     public Order? Order { get; set; }
 }

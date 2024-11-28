@@ -5,7 +5,10 @@ public class Category
 {
     [Key]
     public int Id { get; set; }
-    public string? Name { get; set; }
-    public string? Description { get; set; }
-    public string? Path_image { get; set; }
+    public required string Name { get; set; }
+    public required string Description { get; set; }
+    public required string PathImage { get; set; }
+
+    // Relacionamento
+    public ICollection<Product>? Products { get; set; }
 }

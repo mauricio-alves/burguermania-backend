@@ -5,7 +5,7 @@ using WebAPI.Context;
 
 namespace WebAPI.Controllers
 {
-      [Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -21,16 +21,36 @@ namespace WebAPI.Controllers
         // Rota para buscar todos os usuários 
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = await _context.Users
-                .ToListAsync(); // Busca todos os usuários
-
-            if (users == null)
+            try
             {
-                return NotFound("Usuários não encontrados.");
-            }
+                // Busca todos os usuários com os pedidos
+                var users = await _context.Users.Include(u => u.UserOrders).ToListAsync();
 
-            // Retorna todos os usuários            
-            return Ok(new {message= "Usuários encontrados com sucesso!", users}); 
+                if (!users.Any())
+                {
+                    return NotFound("Nenhum usuário encontrado.");
+                }
+
+                // Mapeia os usuários para usar o UserDTO e não retornar a senha
+                var userDTOs = users.Select(u => new UserDTO
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Email = u.Email
+                }).ToList();
+
+                // Retorna todos os usuários            
+                return Ok(new {message= "Usuários encontrados com sucesso!", users = userDTOs}); 
+            }
+            catch (Exception ex)
+            {
+                // Retorna erro 500 com a mensagem detalhada
+                return StatusCode(500, new
+                {
+                    message = "Ocorreu um erro ao processar a requisição.",
+                    error = ex.Message
+                });  
+            }
         }
 
         // GET DETAILS BY ID: api/User/1
@@ -38,16 +58,33 @@ namespace WebAPI.Controllers
         // Rota para buscar um usuário pelo id
         public async Task<ActionResult<User>> GetUser(int id) 
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(c => c.Id == id); // Busca o usuário pelo id        
-
-            if (user == null)
+            try
             {
-                return NotFound("Usuário não encontrado.");
-            }
+                // Busca o usuário específico com os pedidos
+                var user = await _context.Users
+                    .Include(u => u.UserOrders)
+                    .FirstOrDefaultAsync(u => u.Id == id);
 
-            // Retorna o usuário encontrado
-            return Ok(new {message= "Usuário encontrado com sucesso!", user}); 
+                if (user == null)
+                {
+                    return NotFound("Usuário não encontrado.");
+                }
+
+                // Usando o UserDTO para não retornar a senha
+                var userDTO = MapToDTO(user);
+
+                // Retorna o usuário encontrado
+                return Ok(new {message= "Usuário encontrado com sucesso!", user = userDTO}); 
+            }
+            catch (Exception ex)
+            {
+                // Retorna erro 500 com a mensagem detalhada
+                return StatusCode(500, new
+                {
+                    message = "Ocorreu um erro ao processar a requisição.",
+                    error = ex.Message
+                });  
+            }
         }
 
         // POST: api/User
@@ -55,16 +92,32 @@ namespace WebAPI.Controllers
         // Rota para criar um usuário
         public async Task<ActionResult<User>> PostUser(User user) 
         {
-            if (user == null)
+            try
             {
-                return BadRequest("Usuário não informado.");
+                if (user == null)
+                {
+                    return BadRequest("Usuário não informado.");
+                }
+
+                _context.Users.Add(user); // Adiciona o usuário ao contexto
+                await _context.SaveChangesAsync(); // Salva as mudanças no banco de dados
+
+                // Usando o UserDTO para não retornar a senha
+                var userDTO = MapToDTO(user);
+
+                // Retorna o usuário criado
+                return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new {message= "Usuário criado com sucesso!", user = userDTO}); 
+
             }
-
-            _context.Users.Add(user); // Adiciona o usuário
-            await _context.SaveChangesAsync(); // Salva o usuário no banco de dados
-
-            // Retorna o usuário criado
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new {message= "Usuário criado com sucesso!", user}); 
+            catch (Exception ex)
+            {
+                // Retorna erro 500 em caso de falha no processo
+                return StatusCode(500, new 
+                {
+                    message = "Ocorreu um erro ao processar a requisição.",
+                    error = ex.Message
+                });
+            }
         }
 
         // PUT: api/User/1
@@ -78,27 +131,30 @@ namespace WebAPI.Controllers
             }
 
             user.Id = id; // Atribui o id da URL ao objeto usuário
-
             _context.Entry(user).State = EntityState.Modified; // Atualiza o usuário
 
             try
-            {
-                await _context.SaveChangesAsync(); // Salva as alterações
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
                 {
-                    return NotFound("Usuário não encontrado.");
+                    await _context.SaveChangesAsync(); // Salva as alterações
                 }
-                else
+            catch (DbUpdateConcurrencyException ex)
                 {
-                    throw;
+                    if (!UserExists(id))
+                    {
+                        // Caso ocorra um erro de concorrência ao atualizar os dados
+                        return StatusCode(500, new { message = "Usuário não encontrado.", error = ex.Message });
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
-            }
+
+            // Usando o UserDTO para não retornar a senha
+            var userDTO = MapToDTO(user);
 
             // Retorna o usuário atualizado
-            return Ok(new {message= "Usuário atualizado com sucesso!", user}); 
+            return Ok(new {message= "Usuário atualizado com sucesso!", user = userDTO}); 
         }
 
         // DELETE: api/User/1
@@ -106,22 +162,44 @@ namespace WebAPI.Controllers
         // Rota para deletar um usuário
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id); // Busca o usuário pelo id
-            if (user == null)
-            {
-                return NotFound("Usuário não encontrado.");
-            }
+            try
+                {
+                    var user = await _context.Users.FindAsync(id); // Busca o usuário pelo id
+                    if (user == null)
+                    {
+                        return NotFound("Usuário não encontrado.");
+                    }
 
-            _context.Users.Remove(user); // Remove o usuário
-            await _context.SaveChangesAsync(); // Salva as alterações
+                    _context.Users.Remove(user); // Remove o usuário
+                    await _context.SaveChangesAsync(); // Salva as alterações
 
-            // Retorna o usuário removido
-            return Ok(new {message= "Usuário removido com sucesso!", user}); 
+                    // Usando o UserDTO para não retornar a senha
+                    var userDTO = MapToDTO(user);
+
+                    // Retorna o usuário removido
+                    return Ok(new {message= "Usuário removido com sucesso!", user = userDTO}); 
+                }
+            catch (Exception ex)
+                {
+                    // Caso ocorra um erro inesperado, retorna uma resposta 500 com a mensagem de erro
+                    return StatusCode(500, new { message = "Erro ao remover o usuário.", error = ex.Message });
+                }
         }
 
+        // Método para mapear o usuário para o UserDTO e não retornar a senha
+        private UserDTO MapToDTO(User user)
+        {
+            return new UserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
+        }
+
+        // Método para verificar se o usuário existe
         private bool UserExists(int id)
         {
-            // Verifica se o usuário existe
             return _context.Users.Any(e => e.Id == id); 
         }
     }

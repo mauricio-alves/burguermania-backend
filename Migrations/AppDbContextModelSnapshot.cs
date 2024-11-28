@@ -30,12 +30,15 @@ namespace burguermania_backend.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Path_image")
+                    b.Property<string>("PathImage")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -46,12 +49,20 @@ namespace burguermania_backend.Migrations
             modelBuilder.Entity("WebAPI.Models.Order", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<float?>("Value")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<float>("Value")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Orders");
                 });
@@ -59,24 +70,36 @@ namespace burguermania_backend.Migrations
             modelBuilder.Entity("WebAPI.Models.Product", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<string>("Base_description")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BaseDescription")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Full_description")
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FullDescription")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Path_image")
+                    b.Property<string>("PathImage")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Price")
-                        .HasColumnType("text");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -84,9 +107,22 @@ namespace burguermania_backend.Migrations
             modelBuilder.Entity("WebAPI.Models.ProductOrder", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductOrders");
                 });
@@ -100,6 +136,7 @@ namespace burguermania_backend.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -116,12 +153,15 @@ namespace burguermania_backend.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -132,9 +172,22 @@ namespace burguermania_backend.Migrations
             modelBuilder.Entity("WebAPI.Models.UserOrder", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserOrders");
                 });
@@ -142,8 +195,8 @@ namespace burguermania_backend.Migrations
             modelBuilder.Entity("WebAPI.Models.Order", b =>
                 {
                     b.HasOne("WebAPI.Models.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("Id")
+                        .WithMany("Orders")
+                        .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -153,8 +206,8 @@ namespace burguermania_backend.Migrations
             modelBuilder.Entity("WebAPI.Models.Product", b =>
                 {
                     b.HasOne("WebAPI.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("Id")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -164,14 +217,14 @@ namespace burguermania_backend.Migrations
             modelBuilder.Entity("WebAPI.Models.ProductOrder", b =>
                 {
                     b.HasOne("WebAPI.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("Id")
+                        .WithMany("ProductOrders")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebAPI.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("Id")
+                        .WithMany("ProductOrders")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -183,20 +236,47 @@ namespace burguermania_backend.Migrations
             modelBuilder.Entity("WebAPI.Models.UserOrder", b =>
                 {
                     b.HasOne("WebAPI.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("Id")
+                        .WithMany("UserOrders")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("Id")
+                        .WithMany("UserOrders")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebAPI.Models.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("WebAPI.Models.Order", b =>
+                {
+                    b.Navigation("ProductOrders");
+
+                    b.Navigation("UserOrders");
+                });
+
+            modelBuilder.Entity("WebAPI.Models.Product", b =>
+                {
+                    b.Navigation("ProductOrders");
+                });
+
+            modelBuilder.Entity("WebAPI.Models.Status", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("WebAPI.Models.User", b =>
+                {
+                    b.Navigation("UserOrders");
                 });
 #pragma warning restore 612, 618
         }
