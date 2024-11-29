@@ -2,6 +2,7 @@ using WebAPI.Models;
 
 namespace WebAPI.Data;
 
+// Dados iniciais para popular as tabelas de produtos e categorias no banco de dados
 public static class SeedData
 {
   public static List<Category> Categories = new List<Category>

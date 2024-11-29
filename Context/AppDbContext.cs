@@ -19,7 +19,7 @@ namespace WebAPI.Context
         public required DbSet<ProductOrder> ProductOrders { get; set; } 
         public required DbSet<UserOrder> UserOrders { get; set; } 
 
-        // Função para popular as tabelas produtos e categorias com dados iniciais
+        // Popula as tabelas de produtos e categorias com dados iniciais ao criar o banco de dados
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
