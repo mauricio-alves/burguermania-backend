@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace WebAPI.Models;
 public class Status
@@ -8,5 +9,6 @@ public class Status
     public required string Name { get; set; }
 
     // Relacionamento
+    [JsonIgnore]
     public ICollection<Order>? Orders { get; set; }
 }

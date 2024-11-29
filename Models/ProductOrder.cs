@@ -9,10 +9,10 @@ public class ProductOrder
     
     // Relacionamentos
     [ForeignKey("Product")]
-    public required int ProductId { get; set; }
+    public int ProductId { get; set; }
     public Product? Product { get; set; }
 
     [ForeignKey("Order")]
-    public required int OrderId { get; set; }
+    public int OrderId { get; set; }
     public Order? Order { get; set; }
 }

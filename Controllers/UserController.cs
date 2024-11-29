@@ -172,8 +172,8 @@ namespace WebAPI.Controllers
                     return NotFound("Usuário não encontrado.");
                 }
 
-                _context.Users.Remove(user); // Remove o usuário
-                await _context.SaveChangesAsync(); // Salva as alterações
+                _context.Users.Remove(user); // Remove o usuário do contexto
+                await _context.SaveChangesAsync(); // Salva a remoção no banco de dados
 
                 // Usando o UserDTO para não retornar a senha
                 var userDTO = MapToDTO(user);
@@ -195,7 +195,8 @@ namespace WebAPI.Controllers
             {
                 Id = user.Id,
                 Name = user.Name,
-                Email = user.Email
+                Email = user.Email,
+                UserOrders = user.UserOrders
             };
         }
 
