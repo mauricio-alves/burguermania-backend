@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WebAPI.Models;
 public class Product
@@ -15,6 +16,7 @@ public class Product
     // Relacionamentos
     [ForeignKey("Category")]
     public required int CategoryId { get; set; }
+    [JsonIgnore]
     public Category? Category { get; set; }
 
     public ICollection<ProductOrder>? ProductOrders { get; set; }

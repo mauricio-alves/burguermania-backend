@@ -10,5 +10,5 @@ public class Category
     public required string PathImage { get; set; }
 
     // Relacionamento
-    public ICollection<Product>? Products { get; set; }
+    public ICollection<Product>? Products { get; set; } = new List<Product>();
 }

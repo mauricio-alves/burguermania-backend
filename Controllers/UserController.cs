@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
             _context = context;
         }
 
-        // GET ALL: api/User
+        // GET ALL: api/user
         [HttpGet]
         // Rota para buscar todos os usuários 
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        // GET DETAILS BY ID: api/User/1
+        // GET DETAILS BY ID: api/user/1
         [HttpGet("{id}")]
         // Rota para buscar um usuário pelo id
         public async Task<ActionResult<User>> GetUser(int id) 
@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        // POST: api/User
+        // POST: api/user
         [HttpPost]
         // Rota para criar um usuário
         public async Task<ActionResult<User>> PostUser(User user) 
@@ -120,7 +120,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        // PUT: api/User/1
+        // PUT: api/user/1
         [HttpPut("{id}")]
         // Rota para atualizar um usuário
         public async Task<IActionResult> PutUser(int id, [FromBody] User user) 
@@ -157,7 +157,7 @@ namespace WebAPI.Controllers
             return Ok(new {message= "Usuário atualizado com sucesso!", user = userDTO}); 
         }
 
-        // DELETE: api/User/1
+        // DELETE: api/user/1
         [HttpDelete("{id}")]
         // Rota para remover um usuário
         public async Task<IActionResult> DeleteUser(int id)

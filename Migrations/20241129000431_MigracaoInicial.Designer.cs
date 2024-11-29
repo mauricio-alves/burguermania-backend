@@ -11,7 +11,7 @@ using WebAPI.Context;
 namespace burguermania_backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241128162037_MigracaoInicial")]
+    [Migration("20241129000431_MigracaoInicial")]
     partial class MigracaoInicial
     {
         /// <inheritdoc />

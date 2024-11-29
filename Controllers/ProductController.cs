@@ -7,16 +7,16 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProdutoController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public ProdutoController(AppDbContext context)
+        public ProductController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET ALL: api/Produto
+        // GET ALL: api/produto
         [HttpGet]
         // Rota para buscar todos os produtos
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
           }
         }
 
-        // GET DETAILS BY ID: api/Produto/1
+        // GET DETAILS BY ID: api/produto/1
         [HttpGet("{id}")]
         // Rota para buscar um produto pelo id
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -78,7 +78,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        // POST: api/Produto
+        // POST: api/produto
         [HttpPost]
          // Rota para criar um produto
         public async Task<ActionResult<Product>> PostProduct(Product product)
@@ -90,7 +90,7 @@ namespace WebAPI.Controllers
               return BadRequest("Produto não informado.");
             }
 
-            _context.Products.Add(product); // Adiciona o produto
+            _context.Products.Add(product); // Adiciona o produto ao contexto
             await _context.SaveChangesAsync(); // Salva o produto no banco de dados
 
             // Retorna o produto criado
@@ -108,9 +108,10 @@ namespace WebAPI.Controllers
             }
         }
 
-        // PUT: api/Produto/1
+        // PUT: api/produto/1
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduto(int id, Product product) // Atualiza um produto
+        // Rota para atualizar um produto
+        public async Task<IActionResult> PutProduct(int id, Product product)
         {
             if (product == null)
             {
@@ -129,7 +130,7 @@ namespace WebAPI.Controllers
               if (!ProductExists(id))
               {
                 // Caso ocorra um erro de concorrência ao atualizar os dados
-                return StatusCode(500, new { message = "Usuário não encontrado.", error = ex.Message });
+                return StatusCode(500, new { message = "Produto não encontrado.", error = ex.Message });
               }
               else
               {
@@ -141,7 +142,7 @@ namespace WebAPI.Controllers
             return Ok(new {message= "Produto atualizado com sucesso!", product}); 
         }
 
-        // // DELETE: api/Produto/1
+        // // DELETE: api/produto/1
         [HttpDelete("{id}")]
         // Rota para remover um produto
         public async Task<IActionResult> DeleteProduct(int id) 
@@ -166,13 +167,14 @@ namespace WebAPI.Controllers
           catch (Exception ex)
           {
             // Caso ocorra um erro inesperado, retorna uma resposta 500 com a mensagem de erro
-            return StatusCode(500, new { message = "Erro ao remover o usuário.", error = ex.Message });
+            return StatusCode(500, new { message = "Erro ao remover o produto.", error = ex.Message });
           }
         }
 
+        // Método para verificar se o produto existe
         private bool ProductExists(int id)
         {
-            return _context.Products.Any(e => e.Id == id); // Verifica se o produto existe
+            return _context.Products.Any(e => e.Id == id);
         }
     }
 }
