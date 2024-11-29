@@ -1,5 +1,6 @@
 using WebAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Data;
 
 namespace WebAPI.Context
 {
@@ -17,5 +18,23 @@ namespace WebAPI.Context
         public required DbSet<Order> Orders { get; set; } 
         public required DbSet<ProductOrder> ProductOrders { get; set; } 
         public required DbSet<UserOrder> UserOrders { get; set; } 
+
+        // Função para popular as tabelas produtos e categorias com dados iniciais
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Seed Data de Categorias
+            foreach (var category in SeedData.Categories)
+            {
+                modelBuilder.Entity<Category>().HasData(category);
+            }
+
+            // Seed Data de Produtos
+            foreach (var product in SeedData.Products)
+            {
+                modelBuilder.Entity<Product>().HasData(product);
+            }
+        }
     }
 }
