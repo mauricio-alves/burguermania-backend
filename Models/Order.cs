@@ -8,6 +8,7 @@ public class Order
     [Key]
     public int Id { get; set; }
     public float Value { get; set; }
+    public string? Observation { get; set; }
 
     // Relacionamentos
     [ForeignKey("Status")]

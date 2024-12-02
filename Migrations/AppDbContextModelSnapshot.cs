@@ -100,6 +100,9 @@ namespace burguermania_backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Observation")
+                        .HasColumnType("text");
+
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
@@ -364,6 +367,9 @@ namespace burguermania_backend.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

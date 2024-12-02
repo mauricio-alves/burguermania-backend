@@ -88,6 +88,7 @@ namespace burguermania_backend.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Value = table.Column<float>(type: "real", nullable: false),
+                    Observation = table.Column<string>(type: "text", nullable: true),
                     StatusId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -107,6 +108,7 @@ namespace burguermania_backend.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
                     ProductId = table.Column<int>(type: "integer", nullable: false),
                     OrderId = table.Column<int>(type: "integer", nullable: false)
                 },

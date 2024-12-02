@@ -11,7 +11,7 @@ using WebAPI.Context;
 namespace burguermania_backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241202221621_MigracaoInicial")]
+    [Migration("20241202223532_MigracaoInicial")]
     partial class MigracaoInicial
     {
         /// <inheritdoc />
@@ -102,6 +102,9 @@ namespace burguermania_backend.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Observation")
+                        .HasColumnType("text");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
@@ -367,6 +370,9 @@ namespace burguermania_backend.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
