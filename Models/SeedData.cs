@@ -5,6 +5,43 @@ namespace WebAPI.Data;
 // Dados iniciais para popular as tabelas de produtos e categorias no banco de dados
 public static class SeedData
 {
+  public static List<Status> Status = new List<Status>
+  {
+    new Status
+    {
+      Id = 1,
+      Name = "Pendente"
+    },
+    new Status
+    {
+      Id = 2,
+      Name = "Em Processamento"
+    },
+    new Status
+    {
+      Id = 3,
+      Name = "Finalizado"
+    }
+  };
+
+    public static List<User> Users = new List<User>
+  {
+    new User
+    {
+      Id = 1,
+      Name = "Mauricio Alves",
+      Email = "mauricio@email.com",
+      Password = "password123" 
+    },
+    new User
+    {
+      Id = 2,
+      Name = "Fulano de Tal",
+      Email = "fulano@email.com",
+      Password = "password123" 
+    }
+  };
+
   public static List<Category> Categories = new List<Category>
   {
     new Category

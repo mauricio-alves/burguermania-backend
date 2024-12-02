@@ -35,6 +35,18 @@ namespace WebAPI.Context
             {
                 modelBuilder.Entity<Product>().HasData(product);
             }
+
+            // Seed Data de Status
+            foreach (var status in SeedData.Status)
+            {
+                modelBuilder.Entity<Status>().HasData(status);
+            }
+
+            // Seed Data de Usuários
+            foreach (var user in SeedData.Users)
+            {
+                modelBuilder.Entity<User>().HasData(user);
+            }
         }
     }
 }

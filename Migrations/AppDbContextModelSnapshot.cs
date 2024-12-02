@@ -276,7 +276,7 @@ namespace burguermania_backend.Migrations
                             BaseDescription = "Pão, hambúrguer, alface, tomate, queijo e maionese.",
                             CategoryId = 4,
                             FullDescription = "Um hambúrguer vegano suculento feito com uma base de grão-de-bico e quinoa, temperado com especiarias defumadas, cebola caramelizada e alho, garantindo uma textura rica e saborosa. Servido em um pão macio, ele vem acompanhado de fatias frescas de tomate, alface crocante, picles, abacate cremoso e uma generosa camada de maionese de ervas vegana. Finalizado com molho barbecue agridoce e uma pitada de pimenta-do-reino moída na hora, proporcionando uma combinação deliciosa de sabores e texturas em cada mordida.",
-                            Name = "X-Trufado Supreme",
+                            Name = "X-Trufado-Supreme",
                             PathImage = "https://github.com/mauricio-alves/burguermania-frontend/blob/main/src/app/assets/images/image4.png?raw=true",
                             Price = 59.990000000000002
                         },
@@ -390,6 +390,23 @@ namespace burguermania_backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Status");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Pendente"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Em Processamento"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Finalizado"
+                        });
                 });
 
             modelBuilder.Entity("WebAPI.Models.User", b =>
@@ -415,6 +432,22 @@ namespace burguermania_backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "mauricio@email.com",
+                            Name = "Mauricio Alves",
+                            Password = "password123"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "fulano@email.com",
+                            Name = "Fulano de Tal",
+                            Password = "password123"
+                        });
                 });
 
             modelBuilder.Entity("WebAPI.Models.UserOrder", b =>
